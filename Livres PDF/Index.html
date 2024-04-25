@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Livre en ligne</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.13.200/pdf_viewer.css">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    #pdfViewer {
+        width: 80vw;
+        height: 80vh;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        overflow: hidden;
+        margin: 20px auto;
+    }
+</style>
+</head>
+<body>
+<div id="pdfViewer"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.13.200/pdf.js"></script>
+<script>
+    const pdfPath = 'Canevas.pdf';
+    const pdfViewer = document.getElementById('pdfViewer');
+
+    pdfjsLib.getDocument(pdfPath).promise.then(pdf => {
+        pdf.getPage(1).then(page => {
+            const viewport = page.getViewport({ scale: 1.5 });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            pdfViewer.appendChild(canvas);
+
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+
+            page.render(renderContext).promise.then(() => {
+                // Rendu terminé, rien à faire ici
+            }).catch(error => {
+                console.error('Erreur lors du rendu de la page :', error);
+            });
+        }).catch(error => {
+            console.error('Erreur lors du chargement de la page :', error);
+        });
+    }).catch(error => {
+        console.error('Erreur lors du chargement du PDF :', error);
+    });
+</script>
+</body>
+</html>
